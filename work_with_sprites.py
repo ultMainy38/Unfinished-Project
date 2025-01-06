@@ -116,3 +116,103 @@ class words(pygame.sprite.Sprite):
         if args and args[0].type == pygame.MOUSEBUTTONDOWN:
             if self.image == words.image1:
                 self.image = words.image2
+
+
+class continued(pygame.sprite.Sprite):
+    image1 = load_image("needed1.png")
+    image2 = load_image("needed2.png")
+    now = False
+
+    def __init__(self, group):
+        super().__init__(group)
+        self.image = continued.image1
+        self.rect = self.image.get_rect()
+        self.rect.x = 900
+        self.rect.y = 100
+
+    def update(self, *args):
+        if not continued.now:
+            if args[0] is True:
+                self.image = continued.image2
+                continued.now = True
+                return ""
+        if continued.now:
+            if self.image == continued.image2 and args and args[
+                0].type == pygame.MOUSEBUTTONDOWN and self.rect.collidepoint(args[0].pos):
+                return "yes"
+
+
+class lvl1(pygame.sprite.Sprite):
+    image = load_image("lvl1.png")
+
+    def __init__(self, group):
+        super().__init__(group)
+        self.image = lvl1.image
+        self.rect = self.image.get_rect()
+        self.rect.x = 350
+        self.rect.y = 350
+
+    def update(self, *args):
+        if args and args[0].type == pygame.MOUSEBUTTONDOWN and self.rect.collidepoint(args[0].pos):
+            return "yes"
+
+
+class lvl2(pygame.sprite.Sprite):
+    image = load_image("lvl2.png")
+
+    def __init__(self, group):
+        super().__init__(group)
+        self.image = lvl2.image
+        self.rect = self.image.get_rect()
+        self.rect.x = 500
+        self.rect.y = 350
+
+    def update(self, *args):
+        if args and args[0].type == pygame.MOUSEBUTTONDOWN and self.rect.collidepoint(args[0].pos):
+            if args[1] is True:
+                return "yes"
+            return "no"
+
+
+class lvl3(pygame.sprite.Sprite):
+    image = load_image("lvl3.png")
+
+    def __init__(self, group):
+        super().__init__(group)
+        self.image = lvl3.image
+        self.rect = self.image.get_rect()
+        self.rect.x = 650
+        self.rect.y = 350
+
+    def update(self, *args):
+        if args and args[0].type == pygame.MOUSEBUTTONDOWN and self.rect.collidepoint(args[0].pos):
+            if args[1] is True:
+                return "yes"
+            return "no"
+
+
+class table(pygame.sprite.Sprite):
+    image = load_image("lvls_table.png")
+
+    def __init__(self, group):
+        super().__init__(group)
+        self.image = table.image
+        self.rect = self.image.get_rect()
+        self.rect.x = 300
+        self.rect.y = 100
+
+
+class message(pygame.sprite.Sprite):
+    image = load_image("warning.png")
+
+    def __init__(self, group):
+        super().__init__(group)
+        self.image = message.image
+        self.rect = self.image.get_rect()
+        self.rect.x = 300
+        self.rect.y = 600
+
+    def update(self, *args):
+        self.remove()
+        self.rect.x = random.randrange(290, 310)
+        self.rect.y = random.randrange(590, 610)
