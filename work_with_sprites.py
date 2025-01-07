@@ -150,7 +150,7 @@ class lvl1(pygame.sprite.Sprite):
         self.image = lvl1.image
         self.rect = self.image.get_rect()
         self.rect.x = 350
-        self.rect.y = 350
+        self.rect.y = 400
 
     def update(self, *args):
         if args and args[0].type == pygame.MOUSEBUTTONDOWN and self.rect.collidepoint(args[0].pos):
@@ -165,7 +165,7 @@ class lvl2(pygame.sprite.Sprite):
         self.image = lvl2.image
         self.rect = self.image.get_rect()
         self.rect.x = 500
-        self.rect.y = 350
+        self.rect.y = 400
 
     def update(self, *args):
         if args and args[0].type == pygame.MOUSEBUTTONDOWN and self.rect.collidepoint(args[0].pos):
@@ -182,7 +182,7 @@ class lvl3(pygame.sprite.Sprite):
         self.image = lvl3.image
         self.rect = self.image.get_rect()
         self.rect.x = 650
-        self.rect.y = 350
+        self.rect.y = 400
 
     def update(self, *args):
         if args and args[0].type == pygame.MOUSEBUTTONDOWN and self.rect.collidepoint(args[0].pos):
@@ -216,3 +216,38 @@ class message(pygame.sprite.Sprite):
         self.remove()
         self.rect.x = random.randrange(290, 310)
         self.rect.y = random.randrange(590, 610)
+
+class word_loose(pygame.sprite.Sprite):
+    image = load_image("loose.png")
+
+    def __init__(self, group):
+        super().__init__(group)
+        self.image = word_loose.image
+        self.rect = self.image.get_rect()
+        self.rect.x = 300
+        self.rect.y = 75
+
+class retry(pygame.sprite.Sprite):
+    image = load_image("retry.png")
+
+    def __init__(self, group):
+        super().__init__(group)
+        self.image = retry.image
+        self.rect = self.image.get_rect()
+        self.rect.x = 500
+        self.rect.y = 400
+
+    def update(self, *args):
+        if args and args[0].type == pygame.MOUSEBUTTONDOWN and self.rect.collidepoint(args[0].pos):
+            return "yes"
+
+
+class completed(pygame.sprite.Sprite):
+    image = load_image("accept.png")
+
+    def __init__(self, group, num):
+        super().__init__(group)
+        self.image = completed.image
+        self.rect = self.image.get_rect()
+        self.rect.x = 300 * num
+        self.rect.y = 300 * num

@@ -1,9 +1,9 @@
 import sys
-
 import pygame
 import random
 from work_with_sprites import load_image, logo, play, info, author, back, room, words, continued, lvl1, lvl2, lvl3, \
-    table, message
+    table, message, word_loose, retry, completed
+from lvl1_materials import changing_marks, moving_circle, bricks, change_direction
 import time
 
 if __name__ == "__main__":
@@ -112,6 +112,8 @@ if __name__ == "__main__":
     x, y = 0, 0
     dx, dy = 0, 0
     circle = [600, 500, 20]
+    circle2 = [600, 500, 20]
+    circle3 = [600, 500, 20]
     pad = [500, 600, 150, 30]
 
     pygame.quit()
@@ -121,34 +123,7 @@ if __name__ == "__main__":
     pygame.draw.rect(screen2, "WHITE", pad)
     pygame.draw.circle(screen2, "WHITE", circle[:2], circle[2])
 
-    brick1 = pygame.Rect(0, 0, 100, 50)
-    brick2 = pygame.Rect(100, 0, 100, 50)
-    brick3 = pygame.Rect(200, 0, 100, 50)
-    brick4 = pygame.Rect(300, 0, 100, 50)
-    brick5 = pygame.Rect(400, 0, 100, 50)
-    brick6 = pygame.Rect(500, 0, 100, 50)
-    brick7 = pygame.Rect(600, 0, 100, 50)
-    brick8 = pygame.Rect(700, 0, 100, 50)
-    brick9 = pygame.Rect(800, 0, 100, 50)
-    brick10 = pygame.Rect(900, 0, 100, 50)
-    brick11 = pygame.Rect(1000, 0, 100, 50)
-    brick12 = pygame.Rect(1100, 0, 100, 50)
-    brick13 = pygame.Rect(0, 50, 100, 50)
-    brick14 = pygame.Rect(100, 50, 100, 50)
-    brick15 = pygame.Rect(200, 50, 100, 50)
-    brick16 = pygame.Rect(300, 50, 100, 50)
-    brick17 = pygame.Rect(400, 50, 100, 50)
-    brick18 = pygame.Rect(500, 50, 100, 50)
-    brick19 = pygame.Rect(600, 50, 100, 50)
-    brick20 = pygame.Rect(700, 50, 100, 50)
-    brick21 = pygame.Rect(800, 50, 100, 50)
-    brick22 = pygame.Rect(900, 50, 100, 50)
-    brick23 = pygame.Rect(1000, 50, 100, 50)
-    brick24 = pygame.Rect(1100, 50, 100, 50)
-
-    full_bricks = [brick1, brick2, brick3, brick4, brick5, brick6, brick7, brick8, brick9, brick10, brick11, brick12,
-                   brick13, brick14, brick15, brick16, brick17, brick18, brick19, brick20, brick21, brick22, brick23,
-                   brick24]
+    full_bricks = bricks()
 
     for brick in full_bricks:
         pygame.draw.rect(screen2, "WHITE", brick, 7)
@@ -157,8 +132,12 @@ if __name__ == "__main__":
 
     main_rect = pygame.Rect(pad)
     main_circle = pygame.Rect(580, 480, 40, 40)
+    main_circle2 = pygame.Rect(0, 0, 40, 40)
+    main_circle3 = pygame.Rect(0, 0, 40, 40)
 
     circle_run = [".", "."]
+    circle_run2 = [".", "."]
+    circle_run3 = [".", "."]
     start = False
 
     clock = pygame.time.Clock()
@@ -166,6 +145,13 @@ if __name__ == "__main__":
 
     aim = 24
     now = 0
+    win = ""
+
+    pause_sprites = pygame.sprite.Group()
+    uhoh = word_loose(pause_sprites)
+    retry_button = retry(pause_sprites)
+
+    lvl_selecting = False
 
     while lvl1_running:
         for event in pygame.event.get():
@@ -179,7 +165,7 @@ if __name__ == "__main__":
                     pygame.draw.rect(screen2, "WHITE", pad)
                     main_rect = pygame.Rect(pad)
                     if not start:
-                        circle_run = ["-", "-"]
+                        circle_run = ["+", "-"]
                         start = True
 
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -188,51 +174,127 @@ if __name__ == "__main__":
                     dx = x - pad[0]
                     dy = y - pad[1]
 
-        if main_rect.colliderect(main_circle):
-            pygame.quit()
-            sys.exit()
+        if win == "":
+            if main_rect.colliderect(main_circle) or main_rect.colliderect(main_circle2) or main_rect.colliderect(
+                    main_circle3):
+                win = False
 
-        for brick in full_bricks:
-            if brick.colliderect(main_circle):
-                full_bricks.remove(brick)
-                now += 1
-                if circle_run == ["+", "-"]:
-                    circle_run = ["+", "+"]
-                elif circle_run == ["+", "+"]:
-                    circle_run = ["+", "-"]
-                elif circle_run == ["-", "+"]:
-                    circle_run = ["+", "+"]
-                elif circle_run == ["-", "-"]:
-                    circle_run = ["-", "+"]
+            if now == 8:
+                circle_run2 = ["+", "-"]
+            if now == 16:
+                circle_run3 = ["-", "-"]
 
-        if circle[0] == 1190:
-            circle_run[0] = "-"
-        elif circle[0] == 10:
-            circle_run[1] = "+"
+            for brick in full_bricks:
+                if brick.colliderect(main_circle):
+                    full_bricks.remove(brick)
+                    now += 1
+                    circle_run = changing_marks(circle_run)
+                if now >= 8:
+                    if brick.colliderect(main_circle2):
+                        full_bricks.remove(brick)
+                        now += 1
+                        circle_run2 = changing_marks(circle_run2)
+                if now >= 16:
+                    if brick.colliderect(main_circle3):
+                        full_bricks.remove(brick)
+                        now += 1
+                        circle_run3 = changing_marks(circle_run3)
 
-        if circle[1] == 790:
-            circle[1] = "-"
-        elif circle[1] == 10:
-            circle[1] = "+"
+            screen2.fill((0, 0, 0))
 
-        if circle_run[0] == "+":
-            circle[0] += 3
-        elif circle_run[0] == "-":
-            circle[0] -= 3
+            if start:
+                moving_circle(circle, circle_run)
+                change_direction(circle, circle_run)
 
-        if circle_run[1] == "+":
-            circle[1] += 3
-        elif circle_run[1] == "-":
-            circle[1] -= 3
+            if now >= 8:
+                moving_circle(circle2, circle_run2)
+                change_direction(circle2, circle_run2)
+                if now >= 16:
+                    moving_circle(circle3, circle_run3)
+                    change_direction(circle3, circle_run3)
 
-        main_circle = pygame.Rect(circle[0] - circle[2], circle[1] - circle[2], circle[2] * 2, circle[2] * 2)
+            main_circle = pygame.Rect(circle[0] - circle[2], circle[1] - circle[2], circle[2] * 2, circle[2] * 2)
+            if now >= 8:
+                main_circle2 = pygame.Rect(circle2[0] - circle2[2], circle2[1] - circle2[2], circle2[2] * 2,
+                                           circle2[2] * 2)
+                if now >= 16:
+                    main_circle3 = pygame.Rect(circle3[0] - circle3[2], circle3[1] - circle3[2], circle3[2] * 2,
+                                               circle3[2] * 2)
 
-        pygame.draw.rect(screen2, "WHITE", pad)
-        pygame.draw.circle(screen2, "WHITE", (circle[0], circle[1]), circle[2])
+            pygame.draw.rect(screen2, "WHITE", pad)
+            pygame.draw.circle(screen2, "WHITE", (circle[0], circle[1]), circle[2])
+            if now >= 8:
+                pygame.draw.circle(screen2, "WHITE", (circle2[0], circle2[1]), circle2[2])
+                if now >= 16:
+                    pygame.draw.circle(screen2, "WHITE", (circle3[0], circle3[1]), circle3[2])
 
-        for brick in full_bricks:
-            pygame.draw.rect(screen2, "WHITE", brick, 7)
+            for brick in full_bricks:
+                pygame.draw.rect(screen2, "WHITE", brick, 7)
 
+            if now == 24:
+                lvl1_completed = True
+                win = True
+                lvl1_running = False
+                lvl_selecting = True
+
+        elif not win:
+            replacing = False
+            screen2.fill((0, 0, 0))
+            pause_sprites.update()
+            if retry_button.update(event) == "yes":
+                win = ""
+
+                main_rect = pygame.Rect(pad)
+                main_circle = pygame.Rect(580, 480, 40, 40)
+                main_circle2 = pygame.Rect(0, 0, 40, 40)
+                main_circle3 = pygame.Rect(0, 0, 40, 40)
+
+                circle_run = [".", "."]
+                circle_run2 = [".", "."]
+                circle_run3 = [".", "."]
+                start = False
+
+                replacing = False
+                x, y = 0, 0
+                dx, dy = 0, 0
+                circle = [600, 500, 20]
+                circle2 = [600, 500, 20]
+                circle3 = [600, 500, 20]
+                pad = [500, 600, 150, 30]
+
+                full_bricks = bricks()
+                now = 0
+            pause_sprites.draw(screen2)
 
         pygame.display.flip()
         clock.tick(FPS)
+
+pygame.quit()
+pygame.init()
+clock = pygame.time.Clock()
+
+size = width, height = 1200, 800
+screen3 = pygame.display.set_mode(size)
+
+lvls_sprites = pygame.sprite.Group()
+button1 = lvl1(lvls_sprites)
+button2 = lvl2(lvls_sprites)
+button3 = lvl3(lvls_sprites)
+name_of_stage = table(lvls_sprites)
+compl = completed(lvls_sprites, 1)
+
+already_checked1 = False
+already_checked2 = False
+
+while lvl_selecting:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            lvl_selecting = False
+
+    lvls_sprites.update()
+    lvls_sprites.draw(screen3)
+
+    pygame.display.flip()
+    clock.tick(FPS)
+
+
