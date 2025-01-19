@@ -4,6 +4,7 @@ import random
 from work_with_sprites import load_image, logo, play, info, author, back, room, words, continued, lvl1, lvl2, lvl3, \
     table, message, word_loose, retry, completed
 from lvl1_materials import changing_marks, moving_circle, bricks, change_direction
+from lvl2_materials import Board
 import time
 
 if __name__ == "__main__":
@@ -174,14 +175,22 @@ if __name__ == "__main__":
                     dx = x - pad[0]
                     dy = y - pad[1]
 
+            if event.type == pygame.KEYUP:
+                if pygame.key.get_pressed()[pygame.K_w]:
+                    lvl1_completed = True
+                    win = True
+                    lvl1_running = False
+                    lvl_selecting = True
+
         if win == "":
-            if main_rect.colliderect(main_circle) or main_rect.colliderect(main_circle2) or main_rect.colliderect(
-                    main_circle3):
+            if main_rect.colliderect(main_circle) or (main_rect.colliderect(main_circle2) and now >= 8) or (
+                    main_rect.colliderect(
+                            main_circle3) and now >= 16):
                 win = False
 
-            if now == 8:
+            if now >= 8 and circle_run2 == [".", "."]:
                 circle_run2 = ["+", "-"]
-            if now == 16:
+            if now >= 16 and circle_run3 == [".", "."]:
                 circle_run3 = ["-", "-"]
 
             for brick in full_bricks:
@@ -285,16 +294,56 @@ compl = completed(lvls_sprites, 1)
 
 already_checked1 = False
 already_checked2 = False
+lvl2_running = False
 
 while lvl_selecting:
+    screen3.fill((0, 0, 0))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             lvl_selecting = False
 
     lvls_sprites.update()
+    if button2.update(event, lvl1_completed) == "yes":
+        lvl2_running = True
+        lvl_selecting = False
+    elif button3.update(event, lvl2_completed) == "no":
+        if not already_checked1 and not already_checked2:
+            warning = message(lvls_sprites)
+            already_checked1, already_checked2 = True, True
     lvls_sprites.draw(screen3)
 
     pygame.display.flip()
     clock.tick(FPS)
 
+sapper_board = Board(16, 16)
+sapper_matrix = [[""] * 16 for i in range(16)]
 
+x, y = 0, 0
+pos_in_matrix = None
+
+start = False
+
+while lvl2_running:
+    screen3.fill((0, 0, 0))
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            lvl2_running = False
+        if event.type == pygame.MOUSEMOTION:
+            x, y = event.pos
+            xm = (x - 200) // sapper_board.cell_size + 1
+            ym = (y - 75) // sapper_board.cell_size + 1
+            if xm > 16 or ym > 16:
+                pos_in_matrix = None
+            elif 1 <= xm <= 16 and 1 <= ym <= 16:
+                pos_in_matrix = (xm, ym)
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                pass
+
+            elif event.button == 3:
+                if pos_in_matrix is not None:
+                    sapper_matrix[pos_in_matrix[1] - 1][pos_in_matrix[0] - 1] = "flag"
+
+    sapper_board.render(screen3, sapper_matrix)
+
+    pygame.display.flip()

@@ -1,15 +1,20 @@
 import pygame
+import random
 
 
 def changing_marks(circle_run):
     if circle_run == ["+", "-"]:
-        return ["+", "+"]
+        bruh = [["+", "+"], ["-", "+"]]
+        return random.choice(bruh)
     elif circle_run == ["+", "+"]:
-        return ["+", "-"]
+        bruh = [["+", "-"], ["-", "-"]]
+        return random.choice(bruh)
     elif circle_run == ["-", "+"]:
-        return ["+", "+"]
+        bruh = [["+", "-"], ["+", "+"]]
+        return random.choice(bruh)
     elif circle_run == ["-", "-"]:
-        return ["-", "+"]
+        bruh = [["-", "+"], ["+", "+"]]
+        return random.choice(bruh)
     elif circle_run == [".", "."]:
         return [".", "."]
 
