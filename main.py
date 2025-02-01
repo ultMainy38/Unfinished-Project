@@ -2,9 +2,9 @@ import sys
 import pygame
 import random
 from work_with_sprites import load_image, logo, play, info, author, back, room, words, continued, lvl1, lvl2, lvl3, \
-    table, message, word_loose, retry, completed
+    table, message, word_loose, retry, completed, checky, easy, normal, hard, ultra_hard, choosing_title
 from lvl1_materials import changing_marks, moving_circle, bricks, change_direction
-from lvl2_materials import Board
+from lvl2_materials import Board, generate_matrix
 import time
 
 if __name__ == "__main__":
@@ -117,6 +117,8 @@ if __name__ == "__main__":
     circle3 = [600, 500, 20]
     pad = [500, 600, 150, 30]
 
+    secret = False
+
     pygame.quit()
     pygame.init()
     size = width, height = 1200, 800
@@ -185,7 +187,7 @@ if __name__ == "__main__":
         if win == "":
             if main_rect.colliderect(main_circle) or (main_rect.colliderect(main_circle2) and now >= 8) or (
                     main_rect.colliderect(
-                            main_circle3) and now >= 16):
+                        main_circle3) and now >= 16):
                 win = False
 
             if now >= 8 and circle_run2 == [".", "."]:
@@ -208,6 +210,12 @@ if __name__ == "__main__":
                         full_bricks.remove(brick)
                         now += 1
                         circle_run3 = changing_marks(circle_run3)
+
+                if brick.colliderect(main_rect):
+                    full_bricks.remove(brick)
+                    now += 1
+                    if not secret:
+                        secret = True
 
             screen2.fill((0, 0, 0))
 
@@ -240,7 +248,7 @@ if __name__ == "__main__":
             for brick in full_bricks:
                 pygame.draw.rect(screen2, "WHITE", brick, 7)
 
-            if now == 24:
+            if now == 36:
                 lvl1_completed = True
                 win = True
                 lvl1_running = False
@@ -315,35 +323,141 @@ while lvl_selecting:
     pygame.display.flip()
     clock.tick(FPS)
 
-sapper_board = Board(16, 16)
-sapper_matrix = [[""] * 16 for i in range(16)]
+sapper_board = Board(14, 10)
+sapper_matrix = [[""] * 14 for i in range(10)]
+real_matrix = [[]]
 
 x, y = 0, 0
 pos_in_matrix = None
 
 start = False
+win = ""
+
+pause_sprites2 = pygame.sprite.Group()
+uhoh2 = word_loose(pause_sprites)
+retry_button2 = retry(pause_sprites)
+
+tryna = pygame.sprite.Group()
+tryna_button = checky(tryna)
+check_possibility = False
+
+CDS = pygame.sprite.Group()
+title = choosing_title(CDS)
+dif1 = easy(CDS)
+dif2 = normal(CDS)
+dif3 = hard(CDS)
+dif4 = ultra_hard(CDS)
+difficulty = ""
 
 while lvl2_running:
+    print(difficulty)
     screen3.fill((0, 0, 0))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             lvl2_running = False
         if event.type == pygame.MOUSEMOTION:
             x, y = event.pos
-            xm = (x - 200) // sapper_board.cell_size + 1
-            ym = (y - 75) // sapper_board.cell_size + 1
-            if xm > 16 or ym > 16:
+            xm = (x - 200) // sapper_board.cell_size
+            ym = (y - 75) // sapper_board.cell_size
+            if xm > 13 or ym > 9:
                 pos_in_matrix = None
-            elif 1 <= xm <= 16 and 1 <= ym <= 16:
+            elif 0 <= xm <= 13 and 0 <= ym <= 9:
                 pos_in_matrix = (xm, ym)
+
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
-                pass
+                if win is not False:
+                    if pos_in_matrix is not None:
+                        if not start:
+                            real_matrix = generate_matrix()
+                            for row in range(0, 10, difficulty[0]):
+                                for obj in range(0, 14, difficulty[1]):
+                                    if real_matrix[row][obj] != "bomb":
+                                        sapper_matrix[row][obj] = real_matrix[row][obj]
+                            start = True
+                        else:
+                            if pos_in_matrix is not None:
+                                if real_matrix[pos_in_matrix[1]][pos_in_matrix[0]] == "bomb":
+                                    win = False
+                                else:
+                                    sapper_matrix[pos_in_matrix[1]][pos_in_matrix[0]] = real_matrix[pos_in_matrix[1]][
+                                        pos_in_matrix[0]]
 
             elif event.button == 3:
-                if pos_in_matrix is not None:
-                    sapper_matrix[pos_in_matrix[1] - 1][pos_in_matrix[0] - 1] = "flag"
+                if start:
+                    if pos_in_matrix is not None:
+                        if sapper_matrix[pos_in_matrix[1]][pos_in_matrix[0]] == "flag":
+                            sapper_matrix[pos_in_matrix[1]][pos_in_matrix[0]] = ""
+                        elif sapper_matrix[pos_in_matrix[1]][pos_in_matrix[0]] == "":
+                            sapper_matrix[pos_in_matrix[1]][pos_in_matrix[0]] = "flag"
 
-    sapper_board.render(screen3, sapper_matrix)
+        if event.type == pygame.KEYUP:
+            if pygame.key.get_pressed()[pygame.K_w]:
+                win = True
+                lvl2_completed = True
+                lvl2_running = False
 
+    if not difficulty:
+        screen3.fill((0, 0, 0))
+        CDS.update()
+
+        if easy.update(event) == "yes":
+            difficulty = [1, 1]
+        elif normal.update(event) == "yes":
+            difficulty = [2, 1]
+        elif hard.update(event) == "yes":
+            difficulty = [2, 2]
+        elif ultra_hard.update(event) == "yes":
+            difficulty = [3, 3]
+
+        CDS.draw(screen3)
+    else:
+        if win is False:
+            screen3.fill((0, 0, 0))
+            pause_sprites2.update()
+            pause_sprites.draw(screen3)
+            if retry_button2.update(event) == "yes":
+                win = ""
+                sapper_board = Board(14, 10)
+                sapper_matrix = [[""] * 14 for i in range(10)]
+                real_matrix = [[]]
+
+                x, y = 0, 0
+                pos_in_matrix = None
+
+                start = False
+                difficulty = ""
+
+            pygame.display.flip()
+            continue
+
+        full = 0
+        for line in sapper_matrix:
+            if all(line):
+                full += 1
+        if full == 10:
+            check_possibility = True
+        else:
+            check_possibility = False
+
+        if check_possibility:
+            screen3.fill((0, 0, 0))
+            tryna.update()
+            if tryna_button.update(event) == "yes":
+                verified = 0
+                for x in range(14):
+                    for y in range(10):
+                        if sapper_matrix[y][x] == real_matrix[y][x] or (
+                            sapper_matrix[y][x] == "flag" and real_matrix[y][x] == "bomb"):
+                            verified += 1
+                if verified == 140:
+                    win = True
+                    lvl2_completed = True
+                    lvl2_running = False
+                else:
+                    win = False
+
+            tryna.draw(screen3)
+
+        sapper_board.render(screen3, sapper_matrix)
     pygame.display.flip()

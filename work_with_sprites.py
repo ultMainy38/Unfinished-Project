@@ -251,3 +251,87 @@ class completed(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = 300 * num
         self.rect.y = 300 * num
+
+
+class checky(pygame.sprite.Sprite):
+    image = load_image("is_ready.png")
+
+    def __init__(self, group):
+        super().__init__(group)
+        self.image = checky.image
+        self.rect = self.image.get_rect()
+        self.rect.x = 300
+        self.rect.y = 600
+
+    def update(self, *args):
+        if args and args[0].type == pygame.MOUSEBUTTONDOWN and self.rect.collidepoint(args[0].pos):
+            return "yes"
+
+class choosing_title(pygame.sprite.Sprite):
+    image = load_image("choose_difficulty_title.png")
+
+    def __init__(self, group):
+        super().__init__(group)
+        self.image = choosing_title.image
+        self.rect = self.image.get_rect()
+        self.rect.x = 250
+        self.rect.y = 100
+
+
+class easy(pygame.sprite.Sprite):
+    image = load_image("easy_mode.png")
+
+    def __init__(self, group):
+        super().__init__(group)
+        self.image = easy.image
+        self.rect = self.image.get_rect()
+        self.rect.x = 250
+        self.rect.y = 400
+
+    def update(self, *args):
+        if args and args[0].type == pygame.MOUSEBUTTONDOWN and self.rect.collidepoint(args[0].pos):
+            return "yes"
+
+
+class normal(pygame.sprite.Sprite):
+    image = load_image("normal_mode.png")
+
+    def __init__(self, group):
+        super().__init__(group)
+        self.image = normal.image
+        self.rect = self.image.get_rect()
+        self.rect.x = 400
+        self.rect.y = 400
+
+    def update(self, *args):
+        if args and args[0].type == pygame.MOUSEBUTTONDOWN and self.rect.collidepoint(args[0].pos):
+            return "yes"
+
+class hard(pygame.sprite.Sprite):
+    image = load_image("hard_mode.png")
+
+    def __init__(self, group):
+        super().__init__(group)
+        self.image = hard.image
+        self.rect = self.image.get_rect()
+        self.rect.x = 550
+        self.rect.y = 400
+
+    def update(self, *args):
+        if args and args[0].type == pygame.MOUSEBUTTONDOWN and self.rect.collidepoint(args[0].pos):
+            return "yes"
+
+
+class ultra_hard(pygame.sprite.Sprite):
+    image = load_image("ultra_hard_mode.png")
+
+    def __init__(self, group):
+        super().__init__(group)
+        self.image = ultra_hard.image
+        self.rect = self.image.get_rect()
+        self.rect.x = 700
+        self.rect.y = 400
+
+    def update(self, *args):
+        if args and args[0].type == pygame.MOUSEBUTTONDOWN and self.rect.collidepoint(args[0].pos):
+            return "yes"
