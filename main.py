@@ -2,10 +2,16 @@ import sys
 import pygame
 import random
 from work_with_sprites import load_image, logo, play, info, author, back, room, words, continued, lvl1, lvl2, lvl3, \
-    table, message, word_loose, retry, completed, checky, easy, normal, hard, ultra_hard, choosing_title
+    table, message, word_loose, retry, completed, checky, easy, normal, hard, ultra_hard, choosing_title, rules, \
+    to_rules, clicker_button, miner_final, bad_final, mysterious_final, secret_button
 from lvl1_materials import changing_marks, moving_circle, bricks, change_direction
 from lvl2_materials import Board, generate_matrix
 import time
+
+bruh_bruh = False
+answer = open("need_to_identify").read()
+if answer == "secret_activated":
+    bruh_bruh = True
 
 if __name__ == "__main__":
     pygame.init()
@@ -17,10 +23,18 @@ if __name__ == "__main__":
     logot = logo(menu_sprites)
     play_button = play(menu_sprites)
     info_button = info(menu_sprites)
+    rules_button = to_rules(menu_sprites)
 
     info_sprites = pygame.sprite.Group()
     word = author(info_sprites)
     back_button = back(info_sprites)
+
+    single_secret = pygame.sprite.Group()
+    secret_btn = secret_button(single_secret)
+
+    rule_sprites = pygame.sprite.Group()
+    main_rules = rules(rule_sprites)
+    back_button2 = back(rule_sprites)
 
     scene_sprites = pygame.sprite.Group()
     rooms = room(scene_sprites)
@@ -36,7 +50,7 @@ if __name__ == "__main__":
     already_checked2 = False
 
     state = 0
-    states = ["menu", "lobby", "scene", "lvl1", "lvl2", "lvl3", "abt_info", "final", "lvls", "pause"]
+    states = ["menu", "lobby", "scene", "lvl1", "secret", "empty", "abt_info", "final", "lvls", "rules"]
     lvl1_completed = False
     lvl2_completed = False
     lvl3_completed = False
@@ -50,6 +64,10 @@ if __name__ == "__main__":
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            if event.type == pygame.KEYUP:
+                if pygame.key.get_pressed()[pygame.K_e]:
+                    if bruh_bruh and states[state] == "abt_info":
+                        state = 4
 
         screen.fill("BLACK")
         if states[state] == "menu":
@@ -58,16 +76,20 @@ if __name__ == "__main__":
                 state = 6
             elif play_button.update(event) == "yes":
                 state = 2
+            elif rules_button.update(event) == "yes":
+                state = -1
             menu_sprites.draw(screen)
             time.sleep(0.05)
 
         elif states[state] == "abt_info":
+            pygame.display.set_caption("Unfinished Project: об авторе")
             info_sprites.update()
             if back_button.update(event) == "yes":
                 state = 0
             info_sprites.draw(screen)
 
         elif states[state] == "scene":
+            pygame.display.set_caption("Unfinished Project: сцена")
             scene_sprites.update(event)
             if dialogue.image == words.image2:
                 if not continued.now:
@@ -76,7 +98,23 @@ if __name__ == "__main__":
                 state = -2
             scene_sprites.draw(screen)
 
+        elif states[state] == "rules":
+            pygame.display.set_caption("Unfinished Project: доп правила")
+            rule_sprites.update()
+            if back_button2.update(event) == "yes":
+                state = 0
+            rule_sprites.draw(screen)
+
+        elif states[state] == "secret":
+            pygame.display.set_caption("Unfinished Project: ???")
+
+            single_secret.update()
+            if secret_btn.update(event) == "yes":
+                pass
+            single_secret.draw(screen)
+
         elif states[state] == "lvls":
+            pygame.display.set_caption("Unfinished Project: выбор уровня")
             if button1.update(event) == "yes":
                 state = 3
                 lvl1_running = True
@@ -157,6 +195,7 @@ if __name__ == "__main__":
     lvl_selecting = False
 
     while lvl1_running:
+        pygame.display.set_caption("Unfinished Project: кирпичики")
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 lvl1_running = False
@@ -305,6 +344,7 @@ already_checked2 = False
 lvl2_running = False
 
 while lvl_selecting:
+    pygame.display.set_caption("Unfinished Project: выбор уровня")
     screen3.fill((0, 0, 0))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -350,7 +390,7 @@ dif4 = ultra_hard(CDS)
 difficulty = ""
 
 while lvl2_running:
-    print(difficulty)
+    pygame.display.set_caption("Unfinished Project: сапёр")
     screen3.fill((0, 0, 0))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -366,22 +406,33 @@ while lvl2_running:
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
-                if win is not False:
-                    if pos_in_matrix is not None:
-                        if not start:
-                            real_matrix = generate_matrix()
-                            for row in range(0, 10, difficulty[0]):
-                                for obj in range(0, 14, difficulty[1]):
-                                    if real_matrix[row][obj] != "bomb":
-                                        sapper_matrix[row][obj] = real_matrix[row][obj]
-                            start = True
-                        else:
-                            if pos_in_matrix is not None:
-                                if real_matrix[pos_in_matrix[1]][pos_in_matrix[0]] == "bomb":
-                                    win = False
-                                else:
-                                    sapper_matrix[pos_in_matrix[1]][pos_in_matrix[0]] = real_matrix[pos_in_matrix[1]][
-                                        pos_in_matrix[0]]
+                if difficulty != "":
+                    if win is not False:
+                        if pos_in_matrix is not None:
+                            if not start:
+                                real_matrix = generate_matrix()
+                                for row in range(0, 10, difficulty[0]):
+                                    for obj in range(0, 14, difficulty[1]):
+                                        if real_matrix[row][obj] != "bomb":
+                                            sapper_matrix[row][obj] = real_matrix[row][obj]
+                                start = True
+                            else:
+                                if pos_in_matrix is not None:
+                                    if real_matrix[pos_in_matrix[1]][pos_in_matrix[0]] == "bomb":
+                                        win = False
+                                    else:
+                                        sapper_matrix[pos_in_matrix[1]][pos_in_matrix[0]] = \
+                                            real_matrix[pos_in_matrix[1]][
+                                                pos_in_matrix[0]]
+                else:
+                    if 250 <= event.pos[0] <= 350 and 400 <= event.pos[1] <= 500:
+                        difficulty = (1, 1)
+                    elif 400 <= event.pos[0] <= 500 and 400 <= event.pos[1] <= 500:
+                        difficulty = (2, 1)
+                    elif 550 <= event.pos[0] <= 650 and 400 <= event.pos[1] <= 500:
+                        difficulty = (2, 2)
+                    elif 700 <= event.pos[0] <= 800 and 400 <= event.pos[1] <= 500:
+                        difficulty = (3, 3)
 
             elif event.button == 3:
                 if start:
@@ -396,20 +447,11 @@ while lvl2_running:
                 win = True
                 lvl2_completed = True
                 lvl2_running = False
+                lvl_selecting = True
 
     if not difficulty:
         screen3.fill((0, 0, 0))
         CDS.update()
-
-        if easy.update(event) == "yes":
-            difficulty = [1, 1]
-        elif normal.update(event) == "yes":
-            difficulty = [2, 1]
-        elif hard.update(event) == "yes":
-            difficulty = [2, 2]
-        elif ultra_hard.update(event) == "yes":
-            difficulty = [3, 3]
-
         CDS.draw(screen3)
     else:
         if win is False:
@@ -448,16 +490,130 @@ while lvl2_running:
                 for x in range(14):
                     for y in range(10):
                         if sapper_matrix[y][x] == real_matrix[y][x] or (
-                            sapper_matrix[y][x] == "flag" and real_matrix[y][x] == "bomb"):
+                                sapper_matrix[y][x] == "flag" and real_matrix[y][x] == "bomb"):
                             verified += 1
                 if verified == 140:
                     win = True
                     lvl2_completed = True
                     lvl2_running = False
+                    lvl_selecting = True
                 else:
                     win = False
 
             tryna.draw(screen3)
 
         sapper_board.render(screen3, sapper_matrix)
+    pygame.display.flip()
+
+if difficulty == (3, 3) and win:
+    pygame.quit()
+    pygame.init()
+    screen_fin_miner = pygame.display.set_mode((1280, 720))
+
+    ending_miner_group = pygame.sprite.Group()
+    rofl = miner_final(ending_miner_group)
+
+    prop_running = True
+
+    while prop_running:
+        pygame.display.set_caption("Концовка 4/3")
+        screen_fin_miner.fill((0, 0, 0))
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                prop_running = False
+                pygame.quit()
+                sys.exit()
+        ending_miner_group.update()
+        ending_miner_group.draw(screen_fin_miner)
+
+        pygame.display.flip()
+
+compl2 = completed(lvls_sprites, 2)
+
+while lvl_selecting:
+    screen3.fill((0, 0, 0))
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            lvl_selecting = False
+
+    lvls_sprites.update()
+    if button3.update(event, lvl2_completed) == "yes":
+        lvl3_running = True
+        lvl_selecting = False
+    lvls_sprites.draw(screen3)
+
+    pygame.display.flip()
+    clock.tick(FPS)
+
+clicks = 0
+aim = 1000000
+math_signs = ["+"]
+values = [1]
+if secret:
+    math_signs = ["+", "+", "+", "+", "+", "+", "+", "*"]
+    values = [1, 2]
+
+clicker_buttons = pygame.sprite.Group()
+main_button = clicker_button(clicker_buttons)
+
+ending_running = False
+
+while lvl3_running:
+    screen3.fill((0, 0, 0))
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            lvl3_running = False
+        if event.type == pygame.KEYUP:
+            if pygame.key.get_pressed()[pygame.K_w]:
+                lvl3_completed = True
+                win = True
+                lvl3_running = False
+                ending_running = True
+
+    f = pygame.font.Font(None, 200)
+    text = f.render(f'{clicks}', 1, "WHITE")
+    screen3.blit(text, (450, 200))
+
+    clicker_buttons.update()
+
+    if main_button.update(event) == "yes":
+        if secret:
+            if random.choice(math_signs) == "+":
+                clicks += random.choice(values)
+            else:
+                clicks *= random.choice(values)
+        else:
+            clicks += 1
+
+    clicker_buttons.draw(screen3)
+
+    if clicks >= aim:
+        lvl3_completed = True
+        lvl3_running = False
+        ending_running = True
+
+    pygame.display.flip()
+    clock.tick(10)
+
+final_words = pygame.sprite.Group()
+ending = bad_final(final_words)
+
+if secret:
+    ending = mysterious_final(final_words)
+    file = open("need_to_identify", "r+")
+    file.seek(0)
+    file.write("secret_activated")
+    file.close()
+
+while ending_running:
+    screen3.fill((0, 0, 0))
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            ending_running = False
+            pygame.quit()
+            sys.exit()
+
+    final_words.update()
+    final_words.draw(screen3)
+
     pygame.display.flip()

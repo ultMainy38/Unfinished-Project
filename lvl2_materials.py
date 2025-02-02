@@ -39,8 +39,8 @@ class Board:
 
 
 def generate_matrix():
-    variants = ["empty", "empty", "bomb"]
-    bombs = 30
+    variants = ["empty", "bomb"]
+    bombs = 60
     matrix = [[""] * 14 for i in range(10)]
     while bombs > 0:
         for y in range(14):

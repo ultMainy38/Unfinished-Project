@@ -1,9 +1,7 @@
 import os
 import sys
-from tokenize import group
 import random
 import pygame
-import time
 
 
 def load_image(name):
@@ -249,8 +247,8 @@ class completed(pygame.sprite.Sprite):
         super().__init__(group)
         self.image = completed.image
         self.rect = self.image.get_rect()
-        self.rect.x = 300 * num
-        self.rect.y = 300 * num
+        self.rect.x = 300 + 150 * (num - 1)
+        self.rect.y = 300
 
 
 class checky(pygame.sprite.Sprite):
@@ -288,10 +286,6 @@ class easy(pygame.sprite.Sprite):
         self.rect.x = 250
         self.rect.y = 400
 
-    def update(self, *args):
-        if args and args[0].type == pygame.MOUSEBUTTONDOWN and self.rect.collidepoint(args[0].pos):
-            return "yes"
-
 
 class normal(pygame.sprite.Sprite):
     image = load_image("normal_mode.png")
@@ -303,9 +297,6 @@ class normal(pygame.sprite.Sprite):
         self.rect.x = 400
         self.rect.y = 400
 
-    def update(self, *args):
-        if args and args[0].type == pygame.MOUSEBUTTONDOWN and self.rect.collidepoint(args[0].pos):
-            return "yes"
 
 class hard(pygame.sprite.Sprite):
     image = load_image("hard_mode.png")
@@ -317,10 +308,6 @@ class hard(pygame.sprite.Sprite):
         self.rect.x = 550
         self.rect.y = 400
 
-    def update(self, *args):
-        if args and args[0].type == pygame.MOUSEBUTTONDOWN and self.rect.collidepoint(args[0].pos):
-            return "yes"
-
 
 class ultra_hard(pygame.sprite.Sprite):
     image = load_image("ultra_hard_mode.png")
@@ -331,6 +318,91 @@ class ultra_hard(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = 700
         self.rect.y = 400
+
+
+class rules(pygame.sprite.Sprite):
+    image = load_image("rules.png")
+
+    def __init__(self, group):
+        super().__init__(group)
+        self.image = rules.image
+        self.rect = self.image.get_rect()
+        self.rect.x = 200
+        self.rect.y = 100
+
+
+class to_rules(pygame.sprite.Sprite):
+    image = load_image("rules_button.png")
+
+    def __init__(self, group):
+        super().__init__(group)
+        self.image = to_rules.image
+        self.rect = self.image.get_rect()
+        self.rect.x = 1050
+        self.rect.y = 20
+
+    def update(self, *args):
+        if args and args[0].type == pygame.MOUSEBUTTONDOWN and self.rect.collidepoint(args[0].pos):
+            return "yes"
+
+
+class clicker_button(pygame.sprite.Sprite):
+    image = load_image("clicker_button.png")
+
+    def __init__(self, group):
+        super().__init__(group)
+        self.image = clicker_button.image
+        self.rect = self.image.get_rect()
+        self.rect.x = 300
+        self.rect.y = 400
+
+    def update(self, *args):
+        if args and args[0].type == pygame.MOUSEBUTTONDOWN and self.rect.collidepoint(args[0].pos):
+            return "yes"
+
+
+class miner_final(pygame.sprite.Sprite):
+    image = load_image("chochitaesh.png")
+
+    def __init__(self, group):
+        super().__init__(group)
+        self.image = miner_final.image
+        self.rect = self.image.get_rect()
+        self.rect.x = 0
+        self.rect.y = 0
+
+
+class bad_final(pygame.sprite.Sprite):
+    image = load_image("ending1_picture.png")
+
+    def __init__(self, group):
+        super().__init__(group)
+        self.image = bad_final.image
+        self.rect = self.image.get_rect()
+        self.rect.x = 100
+        self.rect.y = 50
+
+
+class mysterious_final(pygame.sprite.Sprite):
+    image = load_image("ending2_picture.png")
+
+    def __init__(self, group):
+        super().__init__(group)
+        self.image = mysterious_final.image
+        self.rect = self.image.get_rect()
+        self.rect.x = 100
+        self.rect.y = 50
+
+
+class secret_button(pygame.sprite.Sprite):
+    image = load_image("secret_button.png")
+
+    def __init__(self, group):
+        super().__init__(group)
+        self.image = secret_button.image
+        self.rect = self.image.get_rect()
+        self.rect.x = 400
+        self.rect.y = 300
 
     def update(self, *args):
         if args and args[0].type == pygame.MOUSEBUTTONDOWN and self.rect.collidepoint(args[0].pos):
