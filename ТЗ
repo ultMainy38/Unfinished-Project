@@ -1,0 +1,16 @@
+Техническое Задание
+
+Использованные библиотеки: sys, os, pygame, random, time
+
+Классы для спрайтов (наследуются от pygame.sprite.Sprite): logo, play, info, author, back, room, words, continued, lvl1, lvl2, lvl3,
+    table, message, word_loose, retry, completed, checky, easy, normal, hard, ultra_hard, choosing_title, rules,
+    to_rules, clicker_button, miner_final, bad_final, mysterious_final, secret_button, true_ending, animated_sprite, character
+
+Функции(и класс):
+- load_image - шаблонная функция для загрузки изображения из data внутри системы
+- create_bullet и changing_poses - функция для финальной игры для создания пуль и их передвижения
+- changing_marks, moving_circle, bricks, change_direction - функции для работоспособности брик болла. Первая меняет координацию
+шаров в особых случаях, вторая отвечает за движения шаров, третья создает список с кирпичами, которые нужно отрисовать и разбить,
+четвертая меняет направление шаров в случае с прикосновением с границами экрана.
+- Board, generate_matrix - класс и функция для работоспособности сапёра. Класс создает и отрисовывает клетчатое поле в графике,
+а функция генерирует поле с минами и числами для сапера.
