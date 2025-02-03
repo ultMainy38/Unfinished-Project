@@ -16,12 +16,12 @@ def load_image(name):
 class logo(pygame.sprite.Sprite):
     image = load_image("main_logo.png")
 
-    def __init__(self, group):
+    def __init__(self, group, x, y):
         super().__init__(group)
         self.image = logo.image
         self.rect = self.image.get_rect()
-        self.rect.x = 300
-        self.rect.y = 100
+        self.rect.x = x
+        self.rect.y = y
 
     def update(self, *args):
         self.remove()
@@ -407,3 +407,37 @@ class secret_button(pygame.sprite.Sprite):
     def update(self, *args):
         if args and args[0].type == pygame.MOUSEBUTTONDOWN and self.rect.collidepoint(args[0].pos):
             return "yes"
+
+
+class true_ending(pygame.sprite.Sprite):
+    image = load_image("true_ending.png")
+
+    def __init__(self, group):
+        super().__init__(group)
+        self.image = true_ending.image
+        self.rect = self.image.get_rect()
+        self.rect.x = 100
+        self.rect.y = 200
+
+
+class animated_sprite(pygame.sprite.Sprite):
+    def __init__(self, sheet, columns, rows, x, y, group):
+        super().__init__(group)
+        self.frames = []
+        self.cut_sheet(sheet, columns, rows)
+        self.cur_frame = 0
+        self.image = self.frames[self.cur_frame]
+        self.rect = self.rect.move(100, 200)
+
+    def cut_sheet(self, sheet, columns, rows):
+        self.rect = pygame.Rect(0, 0, sheet.get_width() // columns,
+                                sheet.get_height() // rows)
+        for j in range(rows):
+            for i in range(columns):
+                frame_location = (self.rect.w * i, self.rect.h * j)
+                self.frames.append(sheet.subsurface(pygame.Rect(
+                    frame_location, self.rect.size)))
+
+    def update(self):
+        self.cur_frame = (self.cur_frame + 1) % len(self.frames)
+        self.image = self.frames[self.cur_frame]

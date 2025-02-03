@@ -3,7 +3,8 @@ import pygame
 import random
 from work_with_sprites import load_image, logo, play, info, author, back, room, words, continued, lvl1, lvl2, lvl3, \
     table, message, word_loose, retry, completed, checky, easy, normal, hard, ultra_hard, choosing_title, rules, \
-    to_rules, clicker_button, miner_final, bad_final, mysterious_final, secret_button
+    to_rules, clicker_button, miner_final, bad_final, mysterious_final, secret_button, true_ending, animated_sprite
+from lvl3_materials import character, create_bullet, changing_poses
 from lvl1_materials import changing_marks, moving_circle, bricks, change_direction
 from lvl2_materials import Board, generate_matrix
 import time
@@ -12,6 +13,7 @@ bruh_bruh = False
 answer = open("need_to_identify").read()
 if answer == "secret_activated":
     bruh_bruh = True
+secret_lvl_running = False
 
 if __name__ == "__main__":
     pygame.init()
@@ -20,7 +22,7 @@ if __name__ == "__main__":
     pygame.display.set_caption("Unfinished Project: меню")
 
     menu_sprites = pygame.sprite.Group()
-    logot = logo(menu_sprites)
+    logot = logo(menu_sprites, 300, 100)
     play_button = play(menu_sprites)
     info_button = info(menu_sprites)
     rules_button = to_rules(menu_sprites)
@@ -110,7 +112,8 @@ if __name__ == "__main__":
 
             single_secret.update()
             if secret_btn.update(event) == "yes":
-                pass
+                running = False
+                secret_lvl_running = True
             single_secret.draw(screen)
 
         elif states[state] == "lvls":
@@ -324,6 +327,250 @@ if __name__ == "__main__":
 
         pygame.display.flip()
         clock.tick(FPS)
+
+pygame.init()
+secret_screen = pygame.display.set_mode((800, 800))
+
+charge_circles = ["" for i in range(30)]
+rect_circles = ["" for i in range(30)]
+charges = 100
+now = 0
+bullets = []
+bullet_rects = []
+
+secret_lvl_sprites = pygame.sprite.Group()
+secret_character = character(secret_lvl_sprites)
+
+win = ""
+true_ending_running = False
+
+while secret_lvl_running:
+    pygame.display.set_caption("Unfinished Project: выживание")
+    secret_screen.fill((0, 0, 0))
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            secret_lvl_running = False
+            pygame.quit()
+            sys.exit()
+        if event.type == pygame.KEYDOWN:
+            if pygame.key.get_pressed()[pygame.K_e]:
+                win = True
+                true_ending_running = True
+                secret_lvl_running = False
+
+            if pygame.key.get_pressed()[pygame.K_a]:
+                secret_character.rect.x -= 30
+                if len(bullets) < 29 and any(bullets) is False:
+                    bullets.append(create_bullet(secret_character.rect.x, secret_character.rect.y)[1])
+                    bullet_rects.append(create_bullet(secret_character.rect.x, secret_character.rect.y)[0])
+                changing_poses(bullets, bullet_rects, charge_circles)
+
+                for circle in charge_circles:
+                    if circle != "":
+                        cx = circle[0]
+                        cy = circle[1]
+                        radius = circle[2]
+
+                        if cx < secret_character.rect.x:
+                            cx += 5
+                        elif cx > secret_character.rect.x:
+                            cx -= 5
+
+                        if cy < secret_character.rect.y:
+                            cy += 5
+                        elif cy > secret_character.rect.y:
+                            cy -= 5
+
+                        ind = charge_circles.index(circle)
+                        charge_circles[ind] = (cx, cy, radius)
+                        rect_circles[ind] = pygame.Rect(cx - radius, cy - radius, radius, radius)
+
+            if pygame.key.get_pressed()[pygame.K_d]:
+                secret_character.rect.x += 30
+
+                if len(bullets) < 29 and any(bullets) is False:
+                    bullets.append(create_bullet(secret_character.rect.x, secret_character.rect.y)[1])
+                    bullet_rects.append(create_bullet(secret_character.rect.x, secret_character.rect.y)[0])
+                changing_poses(bullets, bullet_rects, charge_circles)
+
+                for circle in charge_circles:
+                    if circle != "":
+                        cx = circle[0]
+                        cy = circle[1]
+                        radius = circle[2]
+
+                        if cx < secret_character.rect.x:
+                            cx += 5
+                        elif cx > secret_character.rect.x:
+                            cx -= 5
+
+                        if cy < secret_character.rect.y:
+                            cy += 5
+                        elif cy > secret_character.rect.y:
+                            cy -= 5
+
+                        ind = charge_circles.index(circle)
+                        charge_circles[ind] = (cx, cy, radius)
+                        rect_circles[ind] = pygame.Rect(cx - radius, cy - radius, radius, radius)
+
+            if pygame.key.get_pressed()[pygame.K_w]:
+                secret_character.rect.y -= 30
+
+                if len(bullets) < 29 and any(bullets) is False:
+                    bullets.append(create_bullet(secret_character.rect.x, secret_character.rect.y)[1])
+                    bullet_rects.append(create_bullet(secret_character.rect.x, secret_character.rect.y)[0])
+                changing_poses(bullets, bullet_rects, charge_circles)
+
+                for circle in charge_circles:
+                    if circle != "":
+                        cx = circle[0]
+                        cy = circle[1]
+                        radius = circle[2]
+
+                        if cx < secret_character.rect.x:
+                            cx += 5
+                        elif cx > secret_character.rect.x:
+                            cx -= 5
+
+                        if cy < secret_character.rect.y:
+                            cy += 5
+                        elif cy > secret_character.rect.y:
+                            cy -= 5
+
+                        ind = charge_circles.index(circle)
+                        charge_circles[ind] = (cx, cy, radius)
+                        rect_circles[ind] = pygame.Rect(cx - radius, cy - radius, radius, radius)
+
+            if pygame.key.get_pressed()[pygame.K_s]:
+                secret_character.rect.y += 30
+
+                if len(bullets) < 29 and all(bullets):
+                    bullets.append(create_bullet(secret_character.rect.x, secret_character.rect.y)[1])
+                    bullet_rects.append(create_bullet(secret_character.rect.x, secret_character.rect.y)[0])
+                changing_poses(bullets, bullet_rects, charge_circles)
+
+                for circle in charge_circles:
+                    if circle != "":
+                        cx = circle[0]
+                        cy = circle[1]
+                        radius = circle[2]
+
+                        if cx < secret_character.rect.x:
+                            cx += 5
+                        elif cx > secret_character.rect.x:
+                            cx -= 5
+
+                        if cy < secret_character.rect.y:
+                            cy += 5
+                        elif cy > secret_character.rect.y:
+                            cy -= 5
+
+                        ind = charge_circles.index(circle)
+                        charge_circles[ind] = (cx, cy, radius)
+                        rect_circles[ind] = pygame.Rect(cx - radius, cy - radius, radius, radius)
+
+    need = 0
+    circle_needed = False
+    for circle in charge_circles:
+        if circle == "":
+            circle_needed = True
+            need = charge_circles.index(circle)
+
+    if circle_needed:
+        ranging = random.randint(1, 3)
+        if ranging == 1:
+            rand_x = random.randint(10, 40)
+        else:
+            rand_x = random.randint(660, 700)
+        rand_y = random.randint(10, 700)
+        rand_rad = random.randint(10, 20)
+
+        circle_rect = pygame.Rect(rand_x - rand_rad, rand_y - rand_rad, rand_rad, rand_rad)
+        charge_circles[need] = (rand_x, rand_y, rand_rad)
+        rect_circles[need] = circle_rect
+        now += 1
+        charges -= 1
+        circle_needed = False
+
+    for circle in charge_circles:
+        if circle != "":
+            cx = circle[0]
+            cy = circle[1]
+            radius = circle[2]
+
+            ind = charge_circles.index(circle)
+            if rect_circles[ind].colliderect(secret_character.rect):
+                win = False
+
+            pygame.draw.circle(secret_screen, "WHITE", (cx, cy), radius)
+
+    for bullet in bullets:
+        if bullet != "":
+            bx = bullet[0]
+            by = bullet[1]
+            side = bullet[2]
+
+            ind = bullets.index(bullet)
+            if rect_circles[ind] != "":
+                if rect_circles[ind].colliderect(bullet_rects[ind]):
+                    bullets.remove(bullets[ind])
+                    bullet_rects.remove(bullet_rects[ind])
+                    charge_circles[ind] = ""
+                    rect_circles[ind] = ""
+
+        pygame.draw.rect(secret_screen, "WHITE", (bx, by, side, side))
+
+    if charges == 0 and charge_circles == ["" for i in range(30)]:
+        win = True
+
+    if win is False:
+        pygame.quit()
+        sys.exit()
+    elif win is True:
+        secret_lvl_running = False
+        true_ending_running = True
+
+    secret_lvl_sprites.update()
+    secret_character.update(event)
+    secret_lvl_sprites.draw(secret_screen)
+
+    pygame.display.flip()
+
+ending_scan = pygame.sprite.Group()
+ending = true_ending(ending_scan)
+
+the_final_of_final_ends = False
+
+while true_ending_running:
+    pygame.display.set_caption("Концовка 3/3")
+    secret_screen.fill((0, 0, 0))
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            true_ending_running = False
+            the_final_of_final_ends = True
+    ending_scan.update()
+    ending_scan.draw(secret_screen)
+    pygame.display.flip()
+
+pygame.quit()
+pygame.init()
+screen_final = pygame.display.set_mode((1000, 600))
+
+final_scan = pygame.sprite.Group()
+just_guy = animated_sprite(load_image("animation.png"), 3, 2, 300, 300, final_scan)
+logo_to_remember = logo(final_scan, 0, 0)
+
+while the_final_of_final_ends:
+    pygame.display.set_caption("Unfinished Project")
+    screen_final.fill((0, 0, 0))
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+    final_scan.update()
+    final_scan.draw(screen_final)
+    pygame.display.flip()
+    pygame.time.Clock().tick(20)
 
 pygame.quit()
 pygame.init()
